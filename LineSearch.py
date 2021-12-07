@@ -15,7 +15,7 @@ def linetrace(F,J,alpha,P,x0,tol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
     p0=p(x)
     log=[[],[]]
     ##sol=np.matrix([0.7937005259840997, 0.7937005259840997]).T #F1 solution
-    sol=np.matrix([1.,1.,1.,1.]) #F2 Solution
+    sol=np.matrix([1.,1.]) #F2 Solution
     for n in range(20000):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
@@ -176,24 +176,6 @@ print(x,n,er)
 plt.plot(log[0],log[1],'r')
 plt.yscale("log")
 [x,n,log,er]=linetrace(F2,J2,Wolfe,gradg,[1.5,1.],15.)
-print(x,n,er)
-plt.plot(log[0],log[1],'m')
-plt.yscale("log")
-plt.show()
-##F3
-[x,n,log,er]=linetrace(F3,J3,hquad,gradg,[1.5,1.,2.,1.2],15.)
-print(x,n,er)
-plt.plot(log[0],log[1],'g')
-plt.yscale("log")
-[x,n,log,er]=linetrace(F3,J3,hquad2,gradg,[1.5,1.,2.,1.2],15.)
-print(x,n,er)
-plt.plot(log[0],log[1],'b')
-plt.yscale("log")
-[x,n,log,er]=linetrace(F3,J3,cons,Newton,[1.5,1.,2.,1.2],15.)
-print(x,n,er)
-plt.plot(log[0],log[1],'r')
-plt.yscale("log")
-[x,n,log,er]=linetrace(F3,J3,Wolfe,gradg,[1.5,1.,2.,1.2],15.)
 print(x,n,er)
 plt.plot(log[0],log[1],'m')
 plt.yscale("log")
