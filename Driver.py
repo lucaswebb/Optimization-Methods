@@ -39,7 +39,6 @@ plt.plot(wolfe_log[0], wolfe_log[1], 'm', label='Wolfe')
 #Trust Region
 plt.plot([item[0] for item in trust_rosen_results[2]], label='Trust-Region')
 
-
 plt.legend()
 plt.title("Rosenbrock starting at (5,5)")
 plt.yscale("log")
@@ -78,13 +77,10 @@ plt.show()
 
 plt.figure(4)
 plt.plot([item[0] for item in trust_rosen_results[2]], [item[3] for item in trust_rosen_results[2]], label='Trust-Region')
-plt.plot(quad_log[1], quad_log[4], label='Quadratic')
-plt.plot(wolfe_log[1], wolfe_log[4], label='Wolfe')
 plt.xscale('log')
-plt.yscale('log')
 plt.gca().invert_xaxis()
 plt.title('Rosenbrock starting at (5,5)')
 plt.xlabel('Log of absolute error')
-plt.ylabel('Lof of # of Hessian or Jacobian Evaluations')
+plt.ylabel('# of Hessian Evaluations')
 plt.legend()
 plt.show()

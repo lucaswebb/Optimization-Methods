@@ -7,17 +7,15 @@ def vlist(x):##Converts vectors to lists
 ##Main Function
 fn=0
 gn=0
-jn=0
 def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
     x=x0
-    global fn,gn,jn
+    global fn,gn
     fn=0
     gn=0
-    jn=0
     p=P(F,J)##Produces a function p(x)
     p0=p(x)
     log=[[],[],[],[], []]
-    for n in range(20000):
+    for n in range(7500):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
         v+=a*p0
@@ -29,7 +27,6 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
         #log[1].append(er)##Assumed error
         log[2].append(fn)
         log[3].append(gn)
-        log[4].append(jn)
         if er<10.**(-tol):
             return log
         p0=px
@@ -40,9 +37,7 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
 def gradg(F,J):##Produces -grad b for p(x)
     def grad(x):
         global fn,gn,jn
-        fn+=1
         gn+=1
-        jn+=1
         return -1.*J(x).T*F(x)
     return grad
 
@@ -88,8 +83,8 @@ def Wolfe(F,J,p,x,v):
     Dg=gradg(F,J)
     dg=Dg(x)
     c1=10**-4
-    c2=.1
-    a=1.
+    c2=0.1
+    a=1.0
     for i in range(1075):##Number goes to machine minimum
         h=g((v+a*p).T.flatten().tolist()[0])
         dgx=Dg((v+a*p).T.flatten().tolist()[0])
