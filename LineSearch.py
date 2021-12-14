@@ -38,7 +38,7 @@ def gradg(F,J):##Produces -grad b for p(x)
     def grad(x):
         global fn,gn,jn
         gn+=1
-        return -1.*J(x).T*F(x)
+        return -2.*J(x).T*F(x)
     return grad
 
 
