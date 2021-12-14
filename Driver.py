@@ -25,22 +25,20 @@ def rosen_jacobian(x):
     j=[[-1,0],[-20*x[0],10]]
     return np.matrix(j)
 
-
-####
-
-
 plt.figure(1)
-sol=np.matrix([1.,1.]).T
-# Quadratic
-quad_log = linetrace(rosenbrock2d,rosen_jacobian,quadratic,gradg,[5.0,5.0],15., sol)
-plt.plot(quad_log[0], quad_log[1], 'b', label='Quadratic')
-
-# Wolfe
-wolfe_log = linetrace(rosenbrock2d,rosen_jacobian,Wolfe,gradg,[5.0,5.0],15., sol)
-plt.plot(wolfe_log[0], wolfe_log[1], 'm', label='Wolfe')
 
 #Trust Region
 plt.plot([item[0] for item in trust_rosen_results[2]], label='Trust-Region')
+
+sol=np.matrix([1.,1.]).T
+# Quadratic
+quad_log = linetrace(rosenbrock2d,rosen_jacobian,quadratic,gradg,[5.0,5.0],15., sol)
+plt.plot(quad_log[0], quad_log[1], label='Quadratic')
+
+# Wolfe
+wolfe_log = linetrace(rosenbrock2d,rosen_jacobian,Wolfe,gradg,[5.0,5.0],15., sol)
+plt.plot(wolfe_log[0], wolfe_log[1], label='Wolfe')
+
 
 plt.legend()
 plt.title("Rosenbrock starting at (5,5)")
@@ -89,19 +87,20 @@ plt.legend()
 plt.show()
 
 
+
 ######### Sphere function
 
-startsphere=[]
+sphere_x0=[]
 for i in range(20):
-    startsphere.append(5.)
+    sphere_x0.append(50.)
 
-solutions=[]
+sphere_sol=[]
 for i in range(20):
-    solutions.append(0.)
-    
-sphere= lambda x:  sum(x**2)
-sphere_grad, sphere_hess = compute_gradient_hessian(sphere, symbols(x:20))
-trust_sphere_results = trust_region(sphere, sphere_grad, sphere_hess, startsphere, solution)
+    sphere_sol.append(0.)
+
+sphere = lambda xs :  sum([x**2 for x in xs])
+sphere_grad, sphere_hess = compute_gradient_hessian(sphere, list(symbols('x:20')))
+trust_sphere_results = trust_region(sphere, sphere_grad, sphere_hess, sphere_x0, sphere_sol)
 print('Trust Region # of iterations:', trust_sphere_results[1])
 
 # Line search was implemented differently
@@ -114,24 +113,23 @@ def sphere20d(x):##g(x,y)=Sphere
 def sphere_jacobian(x):
     return np.identity(20)
 
-
-####
-
 plt.figure(5)
-sol=np.matrix(solution).T
-# Quadratic
-quad_log = linetrace(sphere20d,sphere_jacobian,quadratic,gradg,startsphere,15., sol)
-plt.plot(quad_log[0], quad_log[1], 'b', label='Quadratic')
-
-# Wolfe
-wolfe_log = linetrace(sphere20d,sphere_jacobian,Wolfe,gradg,startsphere,15., sol)
-plt.plot(wolfe_log[0], wolfe_log[1], 'm', label='Wolfe')
 
 #Trust Region
 plt.plot([item[0] for item in trust_sphere_results[2]], label='Trust-Region')
 
+sol=np.matrix(sphere_sol).T
+# Quadratic
+quad_log = linetrace(sphere20d,sphere_jacobian,quadratic,gradg,sphere_x0,15., sphere_sol)
+plt.plot(quad_log[0], quad_log[1], label='Quadratic')
+print(quad_log[2])
+
+# Wolfe
+wolfe_log = linetrace(sphere20d,sphere_jacobian,Wolfe,gradg,sphere_x0,15., sphere_sol)
+plt.plot(wolfe_log[0], wolfe_log[1], label='Wolfe')
+
 plt.legend()
-plt.title("Rosenbrock starting at (5,5)")
+plt.title("Sphere starting at (50,50)")
 plt.yscale("log")
 plt.ylabel('Log of Absolute Error')
 # plt.xscale("log")
@@ -147,7 +145,7 @@ plt.plot(wolfe_log[1], wolfe_log[2], label='Wolfe')
 plt.xscale('log')
 plt.yscale('log')
 plt.gca().invert_xaxis()
-plt.title('Rosenbrock starting at (5,5)')
+plt.title('Sphere starting at (50,50)')
 plt.xlabel('Log of absolute error')
 plt.ylabel('Log # of Function Evaluations')
 plt.legend()
@@ -160,7 +158,7 @@ plt.plot(wolfe_log[1], wolfe_log[3], label='Wolfe')
 plt.xscale('log')
 plt.yscale('log')
 plt.gca().invert_xaxis()
-plt.title('Rosenbrock starting at (5,5)')
+plt.title('Sphere starting at (50,50)')
 plt.xlabel('Log of absolute error')
 plt.ylabel('Log # of Gradient Evaluations')
 plt.legend()
@@ -170,7 +168,7 @@ plt.figure(8)
 plt.plot([item[0] for item in trust_sphere_results[2]], [item[3] for item in trust_sphere_results[2]], label='Trust-Region')
 plt.xscale('log')
 plt.gca().invert_xaxis()
-plt.title('Rosenbrock starting at (5,5)')
+plt.title('Sphere starting at (50,50)')
 plt.xlabel('Log of absolute error')
 plt.ylabel('# of Hessian Evaluations')
 plt.legend()

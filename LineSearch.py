@@ -15,7 +15,14 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
     p=P(F,J)##Produces a function p(x)
     p0=p(x)
     log=[[],[],[],[], []]
-    for n in range(7500):
+
+    log[0].append(0)
+    log[1].append(np.linalg.norm(sol - np.matrix(x).T))  ##Real Error
+    # log[1].append(er)##Assumed error
+    log[2].append(1)
+    log[3].append(1)
+
+    for n in range(1, 7500):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
         v+=a*p0
