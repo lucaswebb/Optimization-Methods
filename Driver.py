@@ -4,18 +4,18 @@ from TrustRegion import *
 import matplotlib.pyplot as plt
 
 
-# Rosenbrock function
+######### Rosenbrock function
+
+# Trust Region
 a = 1
 b = 100
 rosenbrock = lambda x : (a-x[0])**2 + b*(x[1]-x[0]**2)**2
-
 rosen_grad, rosen_hess = compute_gradient_hessian(rosenbrock, [x, y])
-
 trust_rosen_results = trust_region(rosenbrock, rosen_grad, rosen_hess, [5.0, 5.0], [1, 1])
 print('Trust Region # of iterations:', trust_rosen_results[1])
 
 
-##Test Functions
+# Line search was implemented differently
 
 def rosenbrock2d(x):##g(x,y)=Rosenbrock
     f=[[1-x[0]],[10*(x[1]-x[0]**2)]]
@@ -23,8 +23,6 @@ def rosenbrock2d(x):##g(x,y)=Rosenbrock
 def rosen_jacobian(x):
     j=[[-1,0],[-20*x[0],10]]
     return np.matrix(j)
-
-##Executions
 
 plt.figure(1)
 sol=np.matrix([1.,1.]).T
@@ -84,3 +82,6 @@ plt.xlabel('Log of absolute error')
 plt.ylabel('# of Hessian Evaluations')
 plt.legend()
 plt.show()
+
+
+#######
