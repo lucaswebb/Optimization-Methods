@@ -14,8 +14,6 @@ def linetrace(F,J,alpha,P,x0,tol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
     p=P(F,J)##Produces a function p(x)
     p0=p(x)
     log=[[],[]]
-    ##sol=np.matrix([0.7937005259840997, 0.7937005259840997]).T #F1 solution
-    sol=np.matrix([1.,1.]) #F2 Solution
     for n in range(20000):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
@@ -55,20 +53,19 @@ def hquad(F,J,p,x,v):##Creates a 1D quadratic intelopalation for g(x_n+alpha*p(x
     for i in range(1075):##Number goes to machine minimum
         h4=g((v+b*p).T.flatten().tolist()[0])
         if h0>h4:##Checks if the interval is too large in an attempt to find a basin of convergence.
-            b1=b*(.5*np.cos(math.pi/6.)+.5) ##The intelopalation runs off of Chebyshev points for accuracy.
-            b2=b*(.5*np.cos(3*math.pi/6.)+.5)
-            b3=b*(.5*np.cos(5*math.pi/6.)+.5)
+            b1=b*np.sin(math.pi/12.)**2 ##The intelopalation runs off of Chebyshev points for accuracy.
+            b2=b*.5
+            b3=b*np.cos(math.pi/12.)**2
             h1=g(vlist((v+b1*p).T))
             h2=g(vlist((v+b2*p).T))
             h3=g(vlist((v+b3*p).T))
             a1=(h2-h1)/(b2-b1)
-            a2=(h2-a1*(b2-b1))/(b3-b1)/(b3-b2)
-            bm=(a2*(b1+b2)-a1)/(2.*a2)
+            a2=(h3-h2+h1)/(b3-b1)/(b3-b2)
+            bm=(b1+b2-a1/a2)/2.
             hm=g(vlist((v+bm*p).T))
-            if hm<h4:##The 0 of the derivative should usually be a local minima but just in
+            if hm<=h4:##The 0 of the derivative should usually be a local minima but just in
                 return bm
-            else:
-                return b
+            return b
         b*=.5
     return b ##If no basin is found it is likely due to machine error, and the approximation cannot continue further.
 
@@ -90,13 +87,12 @@ def hquad2(F,J,p,x,v):##Creates a 1D quadratic intelopalation for g(x_n+alpha*p(
             h2=g(vlist((v+b2*p).T))
             h3=h4
             a1=(h2-h1)/(b2-b1)
-            a2=(h2-a1*(b2-b1))/(b3-b1)/(b3-b2)
-            bm=(a2*(b1+b2)-a1)/(2.*a2)
+            a2=(h3-h2+h1)/(b3-b1)/(b3-b2)
+            bm=(b1+b2-a1/a2)/2.
             hm=g(vlist((v+bm*p).T))
-            if hm<h4:##The 0 of the derivative should usually be a local minima but just in
+            if hm<=h4:##The 0 of the derivative should usually be a local minima but just in
                 return bm
-            else:
-                return b
+            return b
         b*=.5
     return b ##If no basin is found it is likely due to machine error, and the approximation cannot continue further.
 
@@ -270,7 +266,7 @@ rosenbrock = lambda x : (a-x[0])**2 + b*(x[1]-x[0]**2)**2
 
 rosen_grad, rosen_hess = compute_gradient_hessian(rosenbrock, [x, y])
 
-trust_rosen_results = trust_region(rosenbrock, rosen_grad, rosen_hess, [20.0, 20.0])
+trust_rosen_results = trust_region(rosenbrock, rosen_grad, rosen_hess, [5.0, 5.0])
 
 
 
@@ -278,6 +274,7 @@ trust_rosen_results = trust_region(rosenbrock, rosen_grad, rosen_hess, [20.0, 20
 
 ##Executions
 ##F1
+# sol=np.matrix([0.7937005259840997, 0.7937005259840997]).T
 # [x,n,log,er]=linetrace(F1,J1,hquad,gradg,[1.5,1.],15.)
 # print(x,n,er)
 # plt.plot(log[0],log[1],'g', label='Quadratic, Chebychev')
@@ -298,12 +295,13 @@ trust_rosen_results = trust_region(rosenbrock, rosen_grad, rosen_hess, [20.0, 20
 # plt.xlabel('# of iterations')
 # plt.ylabel('Absolute Error')
 # plt.show()
-#F2
-# [x,n,log,er]=linetrace(F2,J2,hquad,gradg,[5.0,5.0],15.)
-# print(x,n,er)
-# plt.plot(log[0],log[1],'g', label='Quadratic, Chebychev')
-# plt.yscale("log")
-[x,n,log,er]=linetrace(F2,J2,hquad2,gradg,[20.0,20.0],15.)
+##F2
+sol=np.matrix([1.,1.]).T
+[x,n,log,er]=linetrace(F2,J2,hquad,gradg,[20.0,20.0],15.)
+print(x,n,er)
+plt.plot(log[0],log[1],'g', label='Quadratic, Chebychev')
+plt.yscale("log")
+[x,n,log,er]=linetrace(F2,J2,hquad2,gradg,[20.,20.],15.)
 print(x,n,er)
 plt.plot(log[0],log[1],'b', label='Quadratic')
 plt.yscale("log")
@@ -316,10 +314,10 @@ print(x,n,er)
 plt.plot(log[0],log[1],'m', label='Wolfe')
 
 plt.plot(trust_rosen_results[2], label='Trust-Region')
-# plt.xscale("log")
+plt.xscale("log")
 plt.yscale("log")
 plt.legend()
-plt.title("Rosenbrock starting at (20,20)")
+plt.title("Rosenbrock starting at (5,5)")
 # plt.xlim((0, 7500))
 plt.xlabel('# of Iterations')
 plt.ylabel('Log of Absolute Error')
