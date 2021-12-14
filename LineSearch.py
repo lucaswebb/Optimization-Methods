@@ -5,11 +5,16 @@ def vlist(x):##Converts vectors to lists
     return x.flatten().tolist()[0]
 
 ##Main Function
-def linetrace(F,J,alpha,P,x0,tol, sol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
+fn=0
+jn=0
+def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
     x=x0
+    global fn,jn
+    fn=0
+    jn=0
     p=P(F,J)##Produces a function p(x)
     p0=p(x)
-    log=[[],[]]
+    log=[[],[],[],[]]
     for n in range(20000):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
@@ -20,6 +25,8 @@ def linetrace(F,J,alpha,P,x0,tol, sol):##Modulator Form Solves x_n+1=x_n+alpha*p
         log[0].append(n)
         log[1].append(np.linalg.norm(sol-v))##Real Error
         #log[1].append(er)##Assumed error
+        log[2].append(fn)
+        log[3].append(jn)
         if er<10.**(-tol):
             return x, n, log, 0
         p0=px
@@ -29,6 +36,9 @@ def linetrace(F,J,alpha,P,x0,tol, sol):##Modulator Form Solves x_n+1=x_n+alpha*p
 
 def gradg(F,J):##Produces -grad b for p(x)
     def grad(x):
+        global fn,jn
+        fn+=1
+        jn+=1
         return -1.*J(x).T*F(x)
     return grad
 
@@ -36,8 +46,10 @@ def gradg(F,J):##Produces -grad b for p(x)
 ##alpha functions
 
 def quadratic(F,J,p,x,v):##Creates a 1D quadratic intelopalation for g(x_n+alpha*p(x_n))in terms of alpha.
-    def g(x):##Calculates sum fi^2 might need extension in future
+    def g(x):##Calculates sum fi^2
         f=F(x)
+        global fn
+        fn+=1
         g=f.T*f
         return vlist(g)[0]
     h0=g(x)
@@ -55,15 +67,17 @@ def quadratic(F,J,p,x,v):##Creates a 1D quadratic intelopalation for g(x_n+alpha
             a2=(h3-h2+h1)/(b3-b1)/(b3-b2)
             bm=(b1+b2-a1/a2)/2.
             hm=g(vlist((v+bm*p).T))
-            if hm<=h4:##The 0 of the derivative should usually be a local minima but just in
+            if hm<=h4:##The 0 of the derivative should usually be a local minima but in case it is a local max, the upper bound is used.
                 return bm
             return b
         b*=.5
     return b ##If no basin is found it is likely due to machine error, and the approximation cannot continue further.
 
 def Wolfe(F,J,p,x,v):
-    def g(x):##Calculates sum fi^2 might need extension in future
+    def g(x):##Calculates sum fi^2
         f=F(x)
+        global fn
+        fn+=1
         g=f.T*f
         return vlist(g)[0]
     h0=g(x)
