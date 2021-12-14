@@ -24,6 +24,18 @@ def rosen_jacobian(x):
     j=[[-1,0],[-20*x[0],10]]
     return np.matrix(j)
 
+######### Sphere function
+
+# Line search was implemented differently
+
+def sphere20d(x):##g(x,y)=Sphere
+    f=[]
+    for xi in x:
+        f.append([xi])
+    return np.matrix(f)
+def sphere_jacobian(x):
+    return np.identity(20)
+
 plt.figure(1)
 sol=np.matrix([1.,1.]).T
 # Quadratic
