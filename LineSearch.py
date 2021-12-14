@@ -6,15 +6,17 @@ def vlist(x):##Converts vectors to lists
 
 ##Main Function
 fn=0
+gn=0
 jn=0
 def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(x_n)
     x=x0
-    global fn,jn
+    global fn,gn,jn
     fn=0
+    gn=0
     jn=0
     p=P(F,J)##Produces a function p(x)
     p0=p(x)
-    log=[[],[],[],[]]
+    log=[[],[],[],[], []]
     for n in range(20000):
         v=np.matrix(x).T
         a=alpha(F,J,p0,x,v)##Finds the alpha
@@ -26,7 +28,8 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
         log[1].append(np.linalg.norm(sol-v))##Real Error
         #log[1].append(er)##Assumed error
         log[2].append(fn)
-        log[3].append(jn)
+        log[3].append(gn)
+        log[4].append(jn)
         if er<10.**(-tol):
             return log
         p0=px
@@ -36,8 +39,9 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
 
 def gradg(F,J):##Produces -grad b for p(x)
     def grad(x):
-        global fn,jn
+        global fn,gn,jn
         fn+=1
+        gn+=1
         jn+=1
         return -1.*J(x).T*F(x)
     return grad
