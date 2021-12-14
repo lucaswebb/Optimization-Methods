@@ -28,9 +28,9 @@ def linetrace(F,J,alpha,P,x0,tol,sol):##Modulator Form Solves x_n+1=x_n+alpha*p(
         log[2].append(fn)
         log[3].append(jn)
         if er<10.**(-tol):
-            return x, n, log, 0
+            return log
         p0=px
-    return x, 'MAX',log, 1
+    return log
 
 ##P(x) Functions
 

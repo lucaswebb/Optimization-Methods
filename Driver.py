@@ -29,12 +29,12 @@ def rosen_jacobian(x):
 plt.figure(1)
 sol=np.matrix([1.,1.]).T
 # Quadratic
-[x,n,log,er]=linetrace(rosenbrock2d,rosen_jacobian,quadratic,gradg,[5.0,5.0],15., sol)
-plt.plot(log[0],log[1],'b', label='Quadratic')
+quad_log = linetrace(rosenbrock2d,rosen_jacobian,quadratic,gradg,[5.0,5.0],15., sol)
+plt.plot(quad_log[0], quad_log[1], 'b', label='Quadratic')
 
 # Wolfe
-[x,n,log,er]=linetrace(rosenbrock2d,rosen_jacobian,Wolfe,gradg,[5.0,5.0],15., sol)
-plt.plot(log[0],log[1],'m', label='Wolfe')
+wolfe_log = linetrace(rosenbrock2d,rosen_jacobian,Wolfe,gradg,[5.0,5.0],15., sol)
+plt.plot(wolfe_log[0], wolfe_log[1], 'm', label='Wolfe')
 
 #Trust Region
 plt.plot([item[0] for item in trust_rosen_results[2]], label='Trust-Region')
@@ -52,7 +52,10 @@ plt.show()
 
 plt.figure(2)
 plt.plot([item[0] for item in trust_rosen_results[2]], [item[1] for item in trust_rosen_results[2]], label='Trust-Region')
+plt.plot(quad_log[1], quad_log[2], label='Quadratic')
+plt.plot(wolfe_log[1], wolfe_log[2], label='Wolfe')
 plt.xscale('log')
+plt.yscale('log')
 plt.gca().invert_xaxis()
 plt.title('Rosenbrock starting at (5,5)')
 plt.xlabel('Log of absolute error')
@@ -79,5 +82,3 @@ plt.xlabel('Log of absolute error')
 plt.ylabel('# of Hessian Evaluations')
 plt.legend()
 plt.show()
-
-print(trust_rosen_results)
